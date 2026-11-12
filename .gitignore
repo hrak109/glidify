@@ -1,0 +1,23 @@
+# Byte-compiled / Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller temporary build cache
+build/
+build_log.txt
+dist/
+
+# Node
+node_modules/
+
+# OS temporary files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Local IDE preferences
+.vscode/
+.idea/
+*.swp

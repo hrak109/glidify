@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';" />
+    <title>SmoothScroll — Windows 11</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app" class="win11-window">
+      <!-- Title Bar & Header -->
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="7"></rect>
+              <line x1="12" y1="6" x2="12" y2="10" stroke-linecap="round"></line>
+            </svg>
+          </div>
+          <div class="brand-info">
+            <h1 class="brand-title">SmoothScroll</h1>
+            <span class="brand-subtitle">Windows 11 Precision Input Engine</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div id="engine-status" class="status-pill active">
+            <span class="status-dot"></span>
+            <span id="status-text">Engine Active</span>
+          </div>
+          <button id="power-toggle-btn" class="btn btn-secondary" title="Toggle SmoothScroll ON/OFF">
+            <span class="btn-text">Pause</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="tab-playground" id="tab-btn-playground">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Playground & Tuning
+        </button>
+        <button class="tab-btn" data-tab="tab-physics" id="tab-btn-physics">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"></path></svg>
+          Mouse Wheel
+        </button>
+        <button class="tab-btn" data-tab="tab-trackpad" id="tab-btn-trackpad">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"></rect><line x1="12" y1="16" x2="12" y2="20"></line></svg>
+          Trackpad Mode
+        </button>
+        <button class="tab-btn" data-tab="tab-apps" id="tab-btn-apps">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Excluded Apps
+        </button>
+        <button class="tab-btn" data-tab="tab-system" id="tab-btn-system">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          System & Keys
+        </button>
+      </nav>
+
+      <!-- Content Panels -->
+      <main class="content-viewport">
+        
+        <!-- Tab 1: Playground & Quick Presets -->
+        <section id="tab-playground" class="tab-panel active">
+          <div class="panel-hero">
+            <div class="preset-strip">
+              <span class="preset-label">Quick Presets:</span>
+              <button class="preset-chip active" data-preset="buttery">Buttery Smooth (Mac)</button>
+              <button class="preset-chip" data-preset="snappy">Snappy & Responsive</button>
+              <button class="preset-chip" data-preset="glide">Deep Momentum Glide</button>
+              <button class="preset-chip" data-preset="subtle">Subtle Minimal</button>
+            </div>
+          </div>
+
+          <div class="split-layout">
+            <!-- Left: Interactive Test Playground -->
+            <div class="playground-card">
+              <div class="card-header">
+                <h3>Live Scroll Playground</h3>
+                <span class="badge">Scroll test zone</span>
+              </div>
+              <p class="card-desc">Scroll over this area with your mouse wheel or trackpad to test and feel the active physics:</p>
+              
+              <div id="scroll-test-container" class="scroll-canvas">
+                <div class="playground-item highlight">
+                  <div class="item-tag">Top of document</div>
+                  <h4>Feel the friction and inertia</h4>
+                  <p>Try flicking your trackpad or rolling your mouse wheel quickly. Notice the smooth velocity deceleration.</p>
+                </div>
+                <div class="playground-item">
+                  <h4>Responsive Physics Simulation</h4>
+                  <p>Micro-steps are dynamically distributed across 144Hz-240Hz refresh intervals, eliminating Windows stepping stutters.</p>
+                </div>
+                <div class="playground-item">
+                  <h4>Trackpad Two-Finger Gesture Translation</h4>
+                  <p>Precision touchpads glide with fluid momentum rather than abrupt stopping when fingers leave the glass.</p>
+                </div>
+                <div class="playground-item">
+                  <h4>Sub-Delta Accumulation</h4>
+                  <p>Granular delta math preserves precision even during slow, delicate movements.</p>
+                </div>
+                <div class="playground-item">
+                  <h4>Adaptive Flick Acceleration</h4>
+                  <p>Long documents and codefiles can be traversed rapidly with quick flicks without losing precision at low speeds.</p>
+                </div>
+                <div class="playground-item">
+                  <h4>Zero Input Lag Architecture</h4>
+                  <p>Native WH_MOUSE_LL hook runs directly in the OS input pipeline with 1ms multimedia timer accuracy.</p>
+                </div>
+                <div class="playground-item highlight">
+                  <div class="item-tag">End of document</div>
+                  <h4>Smooth deceleration complete</h4>
+                  <p>Tweak the sliders in the other tabs to customize your feel in real-time.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Real-time Telemetry & Quick Adjusters -->
+            <div class="metrics-card">
+              <div class="card-header">
+                <h3>Live Dynamics</h3>
+                <span class="badge live-badge">Real-time</span>
+              </div>
+
+              <div class="telemetry-grid">
+                <div class="metric-box">
+                  <span class="metric-label">Intercepted Events</span>
+                  <span id="metric-intercepted" class="metric-value">0</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-label">Smooth Dispatches</span>
+                  <span id="metric-dispatched" class="metric-value">0</span>
+                </div>
+              </div>
+
+              <div class="mini-controls">
+                <div class="form-group">
+                  <div class="slider-header">
+                    <label for="quick-step">Step Size</label>
+                    <span id="quick-step-val" class="slider-val">120 px</span>
+                  </div>
+                  <input type="range" id="quick-step" min="40" max="240" step="5" value="120" />
+                </div>
+
+                <div class="form-group">
+                  <div class="slider-header">
+                    <label for="quick-duration">Smoothness Duration</label>
+                    <span id="quick-duration-val" class="slider-val">380 ms</span>
+                  </div>
+                  <input type="range" id="quick-duration" min="150" max="800" step="10" value="380" />
+                </div>
+
+                <div class="form-group">
+                  <div class="slider-header">
+                    <label for="quick-friction">Glide Friction</label>
+                    <span id="quick-friction-val" class="slider-val">0.92</span>
+                  </div>
+                  <input type="range" id="quick-friction" min="0.80" max="0.97" step="0.01" value="0.92" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 2: Mouse Wheel Physics -->
+        <section id="tab-physics" class="tab-panel">
+          <div class="settings-group">
+            <h3 class="group-title">Physics & Motion Curves</h3>
+            
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="input-step-size" class="setting-label">Step Size</label>
+                <p class="setting-help">Amount of scroll distance triggered by each physical wheel notch.</p>
+              </div>
+              <div class="setting-control slider-wrap">
+                <span id="val-step-size" class="slider-val">120 px</span>
+                <input type="range" id="input-step-size" min="40" max="300" step="5" value="120" />
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="input-duration" class="setting-label">Animation Duration</label>
+                <p class="setting-help">Time span (in milliseconds) over which each scroll movement smoothly decelerates.</p>
+              </div>
+              <div class="setting-control slider-wrap">
+                <span id="val-duration" class="slider-val">380 ms</span>
+                <input type="range" id="input-duration" min="150" max="900" step="10" value="380" />
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="input-accel" class="setting-label">Flick Acceleration</label>
+                <p class="setting-help">Speed multiplier applied when rolling the wheel rapidly.</p>
+              </div>
+              <div class="setting-control slider-wrap">
+                <span id="val-accel" class="slider-val">1.75x</span>
+                <input type="range" id="input-accel" min="1.0" max="3.5" step="0.05" value="1.75" />
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="input-friction" class="setting-label">Deceleration Friction</label>
+                <p class="setting-help">Viscous damping factor. Higher values result in longer, effortless glides.</p>
+              </div>
+              <div class="setting-control slider-wrap">
+                <span id="val-friction" class="slider-val">0.92</span>
+                <input type="range" id="input-friction" min="0.80" max="0.98" step="0.01" value="0.92" />
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="select-easing" class="setting-label">Easing Interpolation Curve</label>
+                <p class="setting-help">Mathematical curve used to compute deceleration micro-steps.</p>
+              </div>
+              <div class="setting-control">
+                <select id="select-easing" class="form-select">
+                  <option value="easeOutCubic">Ease-Out Cubic (Balanced & Natural)</option>
+                  <option value="exponential">Viscous Exponential (macOS Style Glide)</option>
+                  <option value="spring">Harmonic Spring (Bouncy Physics)</option>
+                  <option value="linear">Linear (Constant Velocity)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h3 class="group-title">Direction & Axes</h3>
+            
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Invert Vertical Scroll</span>
+                <p class="setting-help">Reverse vertical wheel direction (Natural scroll).</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-invert-v" />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Invert Horizontal Scroll</span>
+                <p class="setting-help">Reverse horizontal tilt wheel direction.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-invert-h" />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 3: Trackpad Tuning -->
+        <section id="tab-trackpad" class="tab-panel">
+          <div class="settings-group">
+            <h3 class="group-title">Precision Touchpad Enhancement</h3>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Enable Dedicated Trackpad Smoothing</span>
+                <p class="setting-help">Translates high-frequency two-finger touchpad packets into smooth, continuous wheel movements.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-trackpad-mode" checked />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="input-trackpad-deadzone" class="setting-label">Jitter Deadzone Filter</label>
+                <p class="setting-help">Filters out microscopic finger trembling while resting on the touchpad glass.</p>
+              </div>
+              <div class="setting-control slider-wrap">
+                <span id="val-trackpad-deadzone" class="slider-val">2.5 px</span>
+                <input type="range" id="input-trackpad-deadzone" min="0.5" max="8.0" step="0.5" value="2.5" />
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="input-trackpad-momentum" class="setting-label">Inertial Glide Multiplier</label>
+                <p class="setting-help">Simulates physical momentum after two fingers are lifted from the trackpad.</p>
+              </div>
+              <div class="setting-control slider-wrap">
+                <span id="val-trackpad-momentum" class="slider-val">1.45x</span>
+                <input type="range" id="input-trackpad-momentum" min="0.8" max="2.5" step="0.05" value="1.45" />
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Invert Trackpad Direction Independently</span>
+                <p class="setting-help">Use natural scrolling for trackpad while keeping standard direction for mouse wheel.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-trackpad-invert" />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 4: Excluded Applications -->
+        <section id="tab-apps" class="tab-panel">
+          <div class="settings-group">
+            <h3 class="group-title">Application Blacklist</h3>
+            <p class="group-desc">SmoothScroll will automatically bypass input smoothing when these applications are in the foreground (ideal for competitive games and 3D modeling apps):</p>
+
+            <div class="blacklist-adder">
+              <input type="text" id="input-new-app" class="form-input" placeholder="e.g. game.exe or photoshop.exe" />
+              <button id="btn-add-app" class="btn btn-primary">Add App</button>
+              <button id="btn-detect-app" class="btn btn-secondary">Detect Active App</button>
+            </div>
+
+            <div id="blacklist-container" class="blacklist-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 5: System & Keys -->
+        <section id="tab-system" class="tab-panel">
+          <div class="settings-group">
+            <h3 class="group-title">Windows 11 Integration</h3>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Start with Windows 11</span>
+                <p class="setting-help">Automatically launch SmoothScroll in the background when logging into Windows.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-autostart" />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Start Minimized to System Tray</span>
+                <p class="setting-help">Launch silently into the taskbar notification area without showing the settings window.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-minimized" />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">High-Resolution Multimedia Timer (1ms)</span>
+                <p class="setting-help">Activates Windows timeBeginPeriod(1) for consistent sub-millisecond input dispatch.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-low-latency" checked />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h3 class="group-title">Keyboard Modifiers</h3>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Hold Ctrl for Instant Zoom Passthrough</span>
+                <p class="setting-help">Bypasses smoothing while holding Ctrl so browser and editor zoom shortcuts react instantly.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-ctrl-zoom" checked />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-label">Hold Alt for Double Acceleration</span>
+                <p class="setting-help">Temporarily doubles scroll speed while holding the Alt key for fast navigation.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="check-alt-accel" checked />
+                <span class="slider-pill"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Bottom Status & Actions Footer -->
+      <footer class="app-footer">
+        <div class="footer-left">
+          <span class="footer-hint">Changes apply instantly to the active input hook.</span>
+        </div>
+        <div class="footer-right">
+          <button id="btn-reset-defaults" class="btn btn-outline">Reset to Defaults</button>
+          <button id="btn-save-settings" class="btn btn-primary">Save Settings</button>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

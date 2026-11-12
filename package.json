@@ -1,0 +1,16 @@
+{
+  "name": "glidify",
+  "version": "1.0.0",
+  "description": "Glidify: Apple Magic Trackpad kinetic glide scrolling for Windows 11 by Haistellar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "vite": "^8.3.5"
+  }
+}
